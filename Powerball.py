@@ -5,8 +5,9 @@
 # Python Version 3.7.2
 
 # Importing pkgs
-import random
 import os
+import random
+import decimal
 
 # Clears the screen
 def cls():
@@ -47,8 +48,11 @@ Correct_Numbers = 0
 # Tracks if the user guessed the powerball correctly
 Correct_PowerBall = False
 
-# Stores how much the user has won
+# Displays the user's winnings as text
 Winnings = ["$0.00", "$1.00", "$2.00", "$10.00", "$20.00", "$100.00", "$1,000.00"]
+
+# Tracks the Player's balance
+Player_Balance = decimal.Decimal('5.00')
 
 ########################################################### PROGRAM LOGIC ################################################################
 
@@ -60,6 +64,10 @@ def Draw_Ticket():
     global Random_Number
     global Winning_Ticket
     global Winning_Powerball
+    global Player_Balance
+
+    # Subtracts $1 from the player's balance once they start the game
+    Player_Balance = Player_Balance - decimal.Decimal('1.00')
 
     i = 0
     while i < 3:
@@ -85,8 +93,6 @@ def Manual_Guess():
     global User_Input
     global User_Ticket
     global User_Powerball
-
-    # Debug statements
 
     # Clearing the screen to improve readability
     cls()
@@ -189,6 +195,7 @@ def Calculate_Winnings():
     global Correct_Numbers
     global Correct_PowerBall
     global Winnings
+    global Player_Balance
 
     for Number in User_Ticket:
        if Number in Winning_Ticket:
@@ -205,26 +212,32 @@ def Calculate_Winnings():
         print("\nCongratulations!")
         print("You matched 1 number but not the PowerBall.")
         print("You won: " + Winnings[1])
+        Player_Balance = Player_Balance + decimal.Decimal('1.00')
     elif Correct_Numbers == 1 and Correct_PowerBall == True:
         print("\nCongratulations!")
         print("You matched 1 number and the PowerBall.")
         print("You won: " + Winnings[2])
+        Player_Balance = Player_Balance + decimal.Decimal('2.00')
     elif Correct_Numbers == 2 and Correct_PowerBall == False:
         print("\nCongratulations!")
         print("You matched 2 numbers but not the PowerBall.")
         print("You won: " + Winnings[3])
+        Player_Balance = Player_Balance + decimal.Decimal('10.00')
     elif Correct_Numbers == 2 and Correct_PowerBall == True:
         print("\nCongratulations!")
         print("You matched 2 number and the PowerBall.")
         print("You won: " + Winnings[4])
+        Player_Balance = Player_Balance + decimal.Decimal('20.00')
     elif Correct_Numbers == 3 and Correct_PowerBall == False:
         print("\nCongratulations!")
         print("You matched 3 number but not the PowerBall.")
         print("You won: " + Winnings[5])
+        Player_Balance = Player_Balance + decimal.Decimal('100.00')
     elif Correct_Numbers == 3 and Correct_PowerBall == True:
         print("\nCongratulations!")
         print("You matched 3 numbers and the PowerBall.")
         print("You won: " + Winnings[6])
+        Player_Balance = Player_Balance + decimal.Decimal('1000.00')
     else:
         print("\nBetter luck next time!")
         print("You didn't match any ticket numbers.")
@@ -270,22 +283,33 @@ while Is_Running == True:
 
     print("Welcome to PowerBall!!!".center(100, " "))
 
+    print("Your balance is: $", end="")
+    print(Player_Balance)
+    print("It costs $1 to play the game.")
+
     print("\nPlease enter '1' to select your numbers manually.")
     print("Please enter '2' to guess random numbers.")
     User_Input = input("\nPlease make a selection: ")
 
-    if User_Input == "1":
-        Draw_Ticket() # Generates the winning ticket and PowerBall
-        Manual_Guess() # The player makes their guesses
-        Display_Result() # Checks the player's guess against the winning ticket
-        Calculate_Winnings() # Calculates the amount that the player won
-        Reset_Game() # Resets the game for another playthrough
-    elif User_Input == "2":
-        Draw_Ticket() # Generates the winning ticket and PowerBall
-        Random_Guess() # The computer generates the player's random guess
-        Display_Result() # Checks the player's guess against the winning ticket
-        Calculate_Winnings() # Calculates the amount that the player won
-        Reset_Game() # Resets the game for another playthrough
+    if Player_Balance > 1.00:
+        if User_Input == "1":
+            Draw_Ticket() # Generates the winning ticket and PowerBall
+            Manual_Guess() # The player makes their guesses
+            Display_Result() # Checks the player's guess against the winning ticket
+            Calculate_Winnings() # Calculates the amount that the player won
+            Reset_Game() # Resets the game for another playthrough
+        elif User_Input == "2":
+            Draw_Ticket() # Generates the winning ticket and PowerBall
+            Random_Guess() # The computer generates the player's random guess
+            Display_Result() # Checks the player's guess against the winning ticket
+            Calculate_Winnings() # Calculates the amount that the player won
+            Reset_Game() # Resets the game for another playthrough
+        else:
+            print("\nPlease enter a valid selection.")
+            input("\nPress 'enter' to continue.")
     else:
-        print("\nPlease enter a valid selection.")
-        input("\nPress 'enter' to continue.")
+        cls()
+        print("You do not have enough money to play the game.")
+        input("Press 'enter' to close the game.")
+        Is_Running = False
+        break
